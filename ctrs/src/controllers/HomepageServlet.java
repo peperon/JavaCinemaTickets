@@ -35,13 +35,11 @@ public class HomepageServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		String path = request.getPathInfo();
+		System.out.println(path);
 		request.setAttribute("one", "test");
 		RequestDispatcher view = request.getRequestDispatcher("/jsp/test.jsp");
 		view.forward(request, response);
-		String path = request.getPathInfo();
-		RequestHandler bla = new RequestHandler();
-		bla.handleRequest(path, request, response);
-		
 	}
 	
 	
