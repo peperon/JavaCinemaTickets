@@ -17,6 +17,7 @@ import javax.sql.DataSource;
 
 import model.User;
 
+/** class for JDBC connection */
 public class DatabaseService {
 	
 	public static Context envCtx;
@@ -53,12 +54,5 @@ public class DatabaseService {
 			se.printStackTrace(); 
 		}
 	}
-	public List<User> getUsers() throws SQLException {
-		EntityManagerFactory emf = Persistence.createEntityManagerFactory("ctrs");
-		EntityManager em = emf.createEntityManager();
-		List<User> users = em.createQuery("SELECT u FROM User u", User.class).getResultList();
-		em.close();
-		return users;
-	}
-	
+
 }

@@ -6,25 +6,38 @@ import javax.persistence.Persistence;
 
 public class BaseDataProvider {
 	
-	protected EntityManager entityManager;
+	protected EntityManagerFactory emf;
 	
 	public BaseDataProvider() {
-		EntityManagerFactory emf = Persistence.createEntityManagerFactory("ctrs");
-		this.entityManager = emf.createEntityManager();
+		this.emf = Persistence.createEntityManagerFactory("ctrs");
 	}
+	
+	/*protected EntityManagerFactory getEntityManagerFactory() {
+		return this.emf;
+	}*/
 	
 	protected EntityManager getEntityManager() {
-		return this.entityManager;
+		if (this.emf == null) {
+			this.emf = Persistence.createEntityManagerFactory("ctrs");
+		}
+		return this.emf.createEntityManager();
 	}
 	
-	protected void saveObject(Object object) {
-		getEntityManager().getTransaction().begin();
-		getEntityManager().persist(object);
-		getEntityManager().flush();
-		getEntityManager().getTransaction().commit();
+	protected void closeEntityManager(EntityManager em) {
+		if (em.isOpen()) {
+			em.close();
+		}
 	}
 	
-	protected void closeEntityManager() {
-		this.entityManager.close();
+	protected Object saveObject(Object object) {
+		EntityManager em = getEntityManager();
+		em.getTransaction().begin();
+		em.persist(object);
+		em.flush();
+		em.getTransaction().commit();
+		em.detach(object);
+		closeEntityManager(em);
+		return object;
 	}
+
 }

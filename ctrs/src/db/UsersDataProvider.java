@@ -16,10 +16,21 @@ public class UsersDataProvider extends BaseDataProvider {
 	}
 	
 	public List<User> getUsers() throws SQLException {
-		return getEntityManager().createQuery("SELECT u FROM User u", User.class).getResultList();
+		EntityManager em = getEntityManager();
+		List<User> users = em.createQuery("SELECT u FROM User u", User.class).getResultList();
+		closeEntityManager(em);
+		return users;
 	}
 	
 	public void saveUser(User user) {
 		saveObject(user);
+	}
+	
+	public User getUserByName(String userName) {
+		EntityManager em = getEntityManager();
+		User user = em.createQuery("SELECT u FROM User u WHERE u.userName = :userName", User.class).
+				setParameter("userName", userName).getSingleResult();
+		closeEntityManager(em);
+		return user;
 	}
 }

@@ -4,6 +4,8 @@
         <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
         <!--<non-jta-data-source>java:/comp/env/jdbc/ctrs</non-jta-data-source>-->
         <class>model.User</class>
+        <class>model.Hall</class>
+        <class>model.Movie</class>
         <properties>
             <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/ctrs"/>
             <property name="javax.persistence.jdbc.password" value="p0stgr#s"/>

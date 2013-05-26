@@ -3,12 +3,23 @@ package utils;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import model.User;
+
 public class UserUtils {
 	public static final int MIN_PASSWORD_LENGTH = 6;
 	public static final int MAX_PASSWORD_LENGTH = 30;
 	
-	public static String getSHA256HashString(String password) throws NoSuchAlgorithmException {
-		MessageDigest md = MessageDigest.getInstance("SHA-256");
+	public static String getSHA256HashString(String password) {
+		MessageDigest md;
+		try {
+			md = MessageDigest.getInstance("SHA-256");
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+			return null;
+		}
         md.update(password.getBytes());
  
         byte byteData[] = md.digest();
@@ -19,6 +30,12 @@ public class UserUtils {
         }
  
         return sb.toString();
+	}
+	
+	public static boolean isUserLoggedIn(HttpServletRequest request) {
+		HttpSession session = request.getSession();
+		User user = (User) session.getAttribute(WebAttributes.USER);
+		return user != null;
 	}
 
 }
