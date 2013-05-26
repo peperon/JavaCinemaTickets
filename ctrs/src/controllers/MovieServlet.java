@@ -165,7 +165,7 @@ public class MovieServlet extends HttpServlet {
 				Movie movie = new Movie(null, title, hallId, movieYear, description, movieLength, dateTime);
 				Movie insertedMovie = movieDataProvider.saveMovie(movie);
 				request.setAttribute(WebAttributes.MOVIE, insertedMovie);
-			} else {
+			} else { // update existing movie
 				Movie movie = new Movie(movieId, title, hallId, movieYear, description, movieLength, dateTime);
 				movieDataProvider.updateMovie(movie);
 				request.setAttribute(WebAttributes.MOVIE, movie);
@@ -174,7 +174,6 @@ public class MovieServlet extends HttpServlet {
 			request.setAttribute(WebAttributes.ERROR_MESSAGE, errorMessage);
 		}
 		request.setAttribute(WebAttributes.HALLS, hallDataProvider.getHalls());
-		System.out.println("Error msg: " + errorMessage);
 		request.getRequestDispatcher(WebPages.MOVIE_EDIT).forward(request, response);
 	}
 

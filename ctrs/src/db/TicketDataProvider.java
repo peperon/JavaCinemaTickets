@@ -32,4 +32,11 @@ public class TicketDataProvider extends BaseDataProvider {
 		em.getTransaction().commit();
 		closeEntityManager(em);
 	}
+	
+	public Ticket getTicketById(int id) {
+		EntityManager em = getEntityManager();
+		Ticket ticket = em.find(Ticket.class, id);
+		closeEntityManager(em);
+		return ticket;
+	}
 }
