@@ -1,7 +1,6 @@
 package controllers;
 
 import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
@@ -15,42 +14,40 @@ import javax.servlet.http.HttpServletResponse;
 
 import model.User;
 
-import db.BaseDataProvider;
 import db.UsersDataProvider;
 
-import utils.DatabaseService;
 import utils.LogUtils;
+import utils.UserTypes;
 import utils.UserUtils;
 import utils.WebAttributes;
 import utils.WebPages;
 
-/**
- * Servlet implementation class RegisterServlet
- */
 @WebServlet("/register")
 public class RegisterServlet extends HttpServlet {
 	
-    private UsersDataProvider dataProvider;
+	private UsersDataProvider usersDataProvider;
     
     @Override
     public void init() throws ServletException {
-    	dataProvider = new UsersDataProvider();
+    	usersDataProvider = new UsersDataProvider();
     	super.init();
     }
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		if (UserUtils.isUserLoggedIn(request)) { // check if user is already logged in
+			request.getRequestDispatcher(WebPages.HOME).forward(request, response);
+			return;
+		}
 		LogUtils.logPath(request);
 		RequestDispatcher view = request.getRequestDispatcher(WebPages.REGISTER);
 		view.forward(request, response);
 	}
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		if (UserUtils.isUserLoggedIn(request)) { // check if user is already logged in
+			request.getRequestDispatcher(WebPages.HOME).forward(request, response);
+			return;
+		}
 		LogUtils.logPath(request);
 		String username = request.getParameter("user_name");
 		String password = request.getParameter("password");
@@ -68,7 +65,7 @@ public class RegisterServlet extends HttpServlet {
 			username = username.trim();
 			List<User> users = null;
 			try {
-				users = dataProvider.getUsers();
+				users = usersDataProvider.getUsers();
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
@@ -105,24 +102,23 @@ public class RegisterServlet extends HttpServlet {
 			error = true;
 			errorMessage += "Passwords don't match!";
 		} else {
-			try {
-				passwordHashString = UserUtils.getSHA256HashString(password);
-			} catch (NoSuchAlgorithmException e) {
+			passwordHashString = UserUtils.getSHA256HashString(password);
+			if (passwordHashString == null) {
 				error = true;
 				errorMessage += "There is a problem with our application. Please try again later. ";
-				e.printStackTrace();
 			}
 		}
 		
 		RequestDispatcher view = null;
 		if (!error && !passwordHashString.isEmpty()) {
-			User user = new User(null, username, firstName, lastName, passwordHashString, new Date());
-			dataProvider.saveUser(user);
+			User user = new User(null, username, firstName, lastName, passwordHashString, 
+					new Date(), UserTypes.USER_TYPE_USER);
+			usersDataProvider.saveUser(user);
 			request.setAttribute(WebAttributes.SYSTEM_MESSAGE, "You've registered successfully!");
 			view = request.getRequestDispatcher(WebPages.LOGIN);
 		} else {
 			view = request.getRequestDispatcher(WebPages.REGISTER);
-			request.setAttribute(WebAttributes.ERROR_MESSASAGE, errorMessage);
+			request.setAttribute(WebAttributes.ERROR_MESSAGE, errorMessage);
 		}
 		view.forward(request, response);
 	}

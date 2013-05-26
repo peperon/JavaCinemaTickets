@@ -4,15 +4,9 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Login page</title>
+<title>Insert title here</title>
 </head>
 <body>
-<div style="color:green">${system_message }</div>
-<div style="color:red">${error_message }</div>
-<form action="/ctrs/login" method="post">
-	<input type="text" name="user_name"/>
-	<input type="password" name="password"/>
-	<input type="submit" value="Log in"/>
-</form>
+
 </body>
 </html>

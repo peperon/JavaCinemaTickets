@@ -29,17 +29,21 @@ public class User implements Serializable {
 	@Temporal(TemporalType.DATE)
 	@Column(name="register_date")
 	private Date registerDate;
+	@Basic
+	@Column(name="user_type_id")
+	private int userTypeId;
 	
 	public User() { }
 
 	public User(Integer id, String userName, String firstName, String lastName,
-			String password, Date registerDate) {
+			String password, Date registerDate, int userTypeId) {
 		this.id = id;
 		this.userName = userName;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.password = password;
 		this.registerDate = registerDate;
+		this.userTypeId = userTypeId;
 	}
 
 	public Integer getId() {
@@ -88,8 +92,14 @@ public class User implements Serializable {
 
 	public void setRegisterDate(Date registerDate) {
 		this.registerDate = registerDate;
+	}
+
+	public int getUserTypeId() {
+		return userTypeId;
+	}
+
+	public void setUserTypeId(int userTypeId) {
+		this.userTypeId = userTypeId;
 	};
-	
-	
 	
 }
