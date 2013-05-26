@@ -2,4 +2,5 @@
 <qualifiedTypeNameHistroy>
 <fullyQualifiedTypeName name="javax.servlet.RequestDispatcher"/>
 <fullyQualifiedTypeName name="java.lang.Class"/>
+<fullyQualifiedTypeName name="model.User"/>
 </qualifiedTypeNameHistroy>

@@ -1,0 +1,16 @@
+<Context reloadable="true" crossContext="true" path="/ctrs">
+    <Resource name="jdbc/ctrs"
+        auth="Container"
+        type="javax.sql.DataSource"
+        factory="org.apache.tomcat.dbcp.dbcp.BasicDataSourceFactory"
+        username="postgres"
+        password="qwerty"
+        driverClassName="org.postgresql.Driver"
+        url="jdbc:postgresql://localhost:5432/mydb"
+        maxWait="1000"
+        removeAbandoned="true"
+        maxActive="30"
+        maxIdle="10"
+        removeAbandonedTimeout="60"
+        logAbandoned="true"></Resource>
+</Context>

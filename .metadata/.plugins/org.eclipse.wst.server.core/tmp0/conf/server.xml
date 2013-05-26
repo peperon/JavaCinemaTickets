@@ -125,7 +125,7 @@
         <Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs" pattern="%h %l %u %t &quot;%r&quot; %s %b" prefix="localhost_access_log." resolveHosts="false" suffix=".txt"/>
 
       <Context docBase="D:\Programming\UniProj\java\JavaCinemaTickets\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\wtpwebapps\ROOT" path="" reloadable="false"/><Context crossContext="true" docBase="D:\Programming\UniProj\java\JavaCinemaTickets\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\wtpwebapps\ctrs" path="/ctrs" reloadable="true" source="org.eclipse.jst.jee.server:ctrs">
-    <Resource auth="Container" driverClassName="org.postgresql.Driver" factory="org.apache.tomcat.dbcp.dbcp.BasicDataSourceFactory" logAbandoned="true" maxActive="30" maxIdle="10" maxWait="1000" name="jdbc/ctrs" password="qwerty" removeAbandoned="true" removeAbandonedTimeout="60" type="javax.sql.DataSource" url="jdbc:postgresql://localhost:5432/mydb" username="postgres"/>
+    <Resource auth="Container" driverClassName="org.postgresql.Driver" factory="org.apache.tomcat.dbcp.dbcp.BasicDataSourceFactory" logAbandoned="true" maxActive="30" maxIdle="10" maxWait="1000" name="jdbc/ctrs" password="qwerty" removeAbandoned="true" removeAbandonedTimeout="60" type="javax.sql.DataSource" url="jdbc:postgresql://localhost:5432/ctrs" username="postgres"/>
 </Context></Host>
     </Engine>
   </Service>
