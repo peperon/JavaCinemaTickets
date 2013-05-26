@@ -27,7 +27,8 @@
 			<td>${movie.year }</td>
 			<td>${movie.length }</td>
 			<td>${movie.projection }</td>
-			<td><a href="/ctrs/movie?id=${movie.id }">Edit</a></td>
+			<td><a href="/ctrs/movie?id=${movie.id }">Edit/View</a></td>
+			<td><a href="/ctrs/tickets?movie_id=${movie.id }">Tickets</a></td>
 		</c:forEach>
 	</tbody>
 </table>
@@ -35,5 +36,6 @@
 	<a href="/ctrs/movie">Add new movie</a>
 </c:if>
 <a href="/ctrs/home">Back to welcome page</a>
+<a href="/ctrs/logout">Logout</a>
 </body>
 </html>

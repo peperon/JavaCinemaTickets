@@ -170,10 +170,10 @@ public class MovieServlet extends HttpServlet {
 				movieDataProvider.updateMovie(movie);
 				request.setAttribute(WebAttributes.MOVIE, movie);
 			}
-			request.setAttribute(WebAttributes.HALLS, hallDataProvider.getHalls());
 		} else {
 			request.setAttribute(WebAttributes.ERROR_MESSAGE, errorMessage);
 		}
+		request.setAttribute(WebAttributes.HALLS, hallDataProvider.getHalls());
 		System.out.println("Error msg: " + errorMessage);
 		request.getRequestDispatcher(WebPages.MOVIE_EDIT).forward(request, response);
 	}

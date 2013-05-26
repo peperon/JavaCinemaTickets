@@ -11,7 +11,8 @@
 <c:choose>
 	<c:when test="${sessionScope.user != null}">
 		<span>Welcome ${sessionScope.user.userName }!</span>
-		<a href="/ctrs/logout">Logout</a>
+		<div><a href="/ctrs/movies">Movies</a></div>
+		<div><a href="/ctrs/logout">Logout</a></div>
 		
 	</c:when>
 	<c:otherwise>

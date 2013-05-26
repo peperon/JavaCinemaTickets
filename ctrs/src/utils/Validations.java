@@ -26,8 +26,6 @@ public class Validations {
 	
 	
 	public static void main(String parameters[]) throws ParseException {
-		Calendar calendar = new GregorianCalendar();
-		int currentYear = calendar.get(Calendar.YEAR);
-		System.out.println(currentYear);
+		
 	}
 }

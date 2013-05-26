@@ -6,6 +6,8 @@
         <class>model.User</class>
         <class>model.Hall</class>
         <class>model.Movie</class>
+        <class>model.Ticket</class>
+        <class>model.HallLayout</class>
         <properties>
             <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/ctrs"/>
             <property name="javax.persistence.jdbc.password" value="p0stgr#s"/>
