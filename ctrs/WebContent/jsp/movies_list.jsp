@@ -33,9 +33,9 @@
 	</tbody>
 </table>
 <c:if test="${sessionScope.user != null && sessionScope.user.userTypeId != 1}">
-	<a href="/ctrs/movie">Add new movie</a>
+	<div><a href="/ctrs/movie">Add new movie</a></div>
 </c:if>
-<a href="/ctrs/home">Back to welcome page</a>
-<a href="/ctrs/logout">Logout</a>
+<div><a href="/ctrs/home">Back to welcome page</a></div>
+<div><a href="/ctrs/logout">Logout</a></div>
 </body>
 </html>

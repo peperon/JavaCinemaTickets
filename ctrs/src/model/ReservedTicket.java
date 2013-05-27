@@ -2,14 +2,14 @@ package model;
 
 import java.util.Date;
 
-public class TicketWebModel {
+public class ReservedTicket {
 	
 	private int userId;
 	private int movieId;
 	private int seatId;
 	private Date expiryDate;
 	
-	public TicketWebModel(int userId, int movieId, int seatId) {
+	public ReservedTicket(int userId, int movieId, int seatId) {
 		this.userId = userId;
 		this.movieId = movieId;
 		this.seatId = seatId;

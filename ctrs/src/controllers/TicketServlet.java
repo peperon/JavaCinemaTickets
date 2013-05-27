@@ -17,14 +17,14 @@ import utils.WebPages;
 
 import model.HallLayout;
 import model.HallLayoutWebModel;
+import model.ReservedTicket;
 import model.Ticket;
-import model.TicketWebModel;
 import model.User;
 
 import db.HallDataProvider;
 import db.TicketDataProvider;
 
-@WebServlet("/tickets")
+@WebServlet({"/tickets", "/reserve_tickets", "/confirm_tickets", "/check_tickets"})
 public class TicketServlet extends HttpServlet {
        
 	private HallDataProvider hallDataProvider;
@@ -36,7 +36,21 @@ public class TicketServlet extends HttpServlet {
 		ticketDataProvider = new TicketDataProvider();
 	}
 	
-	private void initializeSeats(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+	private void validateReservedTickets(HttpServletRequest request) {
+		ArrayList<ReservedTicket> reservedTickets = (ArrayList<ReservedTicket>) 
+				request.getServletContext().getAttribute(WebAttributes.RESERVED_TICKETS);
+		List<ReservedTicket> ticketsToRemain = new ArrayList<ReservedTicket>();
+		if (reservedTickets != null && !reservedTickets.isEmpty()) {
+			for (ReservedTicket ticket : reservedTickets) {
+				if (ticket.getExpiryDate().getTime() > new Date().getTime()) {
+					ticketsToRemain.add(ticket);
+				}
+			}
+		}
+		request.getServletContext().setAttribute(WebAttributes.RESERVED_TICKETS, ticketsToRemain);
+	}
+	
+	private void initializeSeats(HttpServletRequest request) throws ServletException {
 		String movie = request.getParameter("movie_id");
 		movie = movie != null ? movie.trim() : null;
 		Integer movieId;
@@ -50,11 +64,11 @@ public class TicketServlet extends HttpServlet {
 		}
 		
 		List<Integer> takenSeats = new ArrayList<Integer>();
-		ArrayList<TicketWebModel> reservedTickets = (ArrayList<TicketWebModel>) 
+		ArrayList<ReservedTicket> reservedTickets = (ArrayList<ReservedTicket>) 
 				getServletContext().getAttribute(WebAttributes.RESERVED_TICKETS);
 		System.out.println(reservedTickets);
 		if (reservedTickets != null && !reservedTickets.isEmpty()) {
-			for (TicketWebModel ticket : reservedTickets) {
+			for (ReservedTicket ticket : reservedTickets) {
 				if (ticket.getMovieId() == movieId && ticket.getExpiryDate().getTime() > new Date().getTime()) {
 					takenSeats.add(ticket.getSeatId());
 				}
@@ -90,14 +104,41 @@ public class TicketServlet extends HttpServlet {
 		request.setAttribute("movie_id", movieId);
 		request.setAttribute("main_list", mainList);
 	}
+	
+	private void initializeTickets(HttpServletRequest request) throws ServletException {
+		String movie = request.getParameter("movie_id");
+		movie = movie != null ? movie.trim() : null;
+		Integer movieId;
+		try {
+			movieId = Integer.valueOf(movie);
+		} catch (NumberFormatException e) {
+			movieId = null;
+		}
+		if (movieId == null) {
+			throw new ServletException("Unknown movie id!");
+		}
+		
+		List<Ticket> movieTickets = new ArrayList<Ticket>();
+		
+		List<Ticket> tickets = ticketDataProvider.getTickets();
+		for (Ticket ticket : tickets) {
+			if (ticket.getMovieId() == movieId) {
+				movieTickets.add(ticket);
+			}
+		}
+		if (!tickets.isEmpty()) {
+			request.setAttribute(WebAttributes.MOVIE_TICKETS, movieTickets);
+		}
+	}
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		initializeSeats(request, response);
+		validateReservedTickets(request);
+		initializeSeats(request);
+		initializeTickets(request);
 		request.getRequestDispatcher(WebPages.TICKETS).forward(request, response);
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String[] seats = request.getParameterValues("seat");
 		User user = (User) request.getSession().getAttribute(WebAttributes.USER);
 		String movie = request.getParameter("movie_id");
 		movie = movie != null ? movie.trim() : null;
@@ -107,26 +148,104 @@ public class TicketServlet extends HttpServlet {
 		} catch (NumberFormatException e) {
 			movieId = null;
 		}
-		if (seats != null && seats.length > 0 && user != null && movieId != null) {
-			ArrayList<TicketWebModel> reservedTickets = 
-					(ArrayList<TicketWebModel>) getServletContext().getAttribute(WebAttributes.RESERVED_TICKETS);
-			if (reservedTickets == null) {
-				reservedTickets = new ArrayList<TicketWebModel>();
-			}
-			for (String seat : seats) {
-				Integer seatId;
-				try {
-					seatId = Integer.valueOf(seat);
-				} catch (NumberFormatException e) {
-					seatId = null;
+		String path = request.getServletPath();
+		String[] seats = request.getParameterValues("seat");
+		String errorMessage = "";
+		boolean hasError = false;
+		validateReservedTickets(request);
+		System.out.println("Path: " + path);
+		if (path.equals("/reserve_tickets")) {
+			if (seats != null && seats.length > 0 && user != null && movieId != null) {
+				ArrayList<ReservedTicket> reservedTickets = 
+						(ArrayList<ReservedTicket>) getServletContext().getAttribute(WebAttributes.RESERVED_TICKETS);
+				if (reservedTickets == null) {
+					reservedTickets = new ArrayList<ReservedTicket>();
 				}
-				if (seatId != null) {
-					reservedTickets.add(new TicketWebModel(user.getId(), movieId, seatId));
+				for (String seat : seats) {
+					hasError = false;
+					Integer seatId;
+					try {
+						seatId = Integer.valueOf(seat);
+					} catch (NumberFormatException e) {
+						seatId = null;
+					}
+					if (seatId != null) {
+						if (reservedTickets != null) {
+							for (ReservedTicket reservedTicket : reservedTickets) {
+								if (reservedTicket.getSeatId() == seatId) {
+									hasError = true;
+									errorMessage += "Seat #" + reservedTicket.getSeatId() + " is already taken! ";
+									break;
+								}
+							}
+						}
+						if (!hasError) {
+							reservedTickets.add(new ReservedTicket(user.getId(), movieId, seatId));
+						}
+					}
+				}
+				getServletContext().setAttribute(WebAttributes.RESERVED_TICKETS, reservedTickets);
+			}
+		} else if (path.equals("/confirm_tickets")) {
+			String[] ticketsToConfirm = request.getParameterValues("ticket");
+			List<Integer> seatIds = new ArrayList<Integer>();
+			if (ticketsToConfirm == null) {
+				errorMessage += "You have selected no tickets to confirm! ";
+			} else {
+				for (String seat : ticketsToConfirm) {
+					Integer seatId;
+					try {
+						seatId = Integer.valueOf(seat);
+					} catch (NumberFormatException e) {
+						seatId = null;
+					}
+					if (seatId != null) {
+						seatIds.add(seatId);
+						ticketDataProvider.saveTicket(new Ticket(null, user.getId(), movieId, seatId, new Date(), false));
+					}
+				}
+				if (!seatIds.isEmpty()) {
+					List<ReservedTicket> newList = new ArrayList<ReservedTicket>();
+					ArrayList<ReservedTicket> reservedTickets = 
+							(ArrayList<ReservedTicket>) getServletContext().getAttribute(WebAttributes.RESERVED_TICKETS);
+					if (reservedTickets != null && !reservedTickets.isEmpty()) {
+						for (ReservedTicket ticket : reservedTickets) {
+							if (!(ticket.getMovieId() == movieId && ticket.getUserId() == user.getId() 
+									&& seatIds.contains(ticket.getSeatId())) 
+									&& ticket.getExpiryDate().getTime() > new Date().getTime()) {
+								newList.add(ticket);
+							}
+						}
+						request.getServletContext().setAttribute(WebAttributes.RESERVED_TICKETS, newList);
+					}
 				}
 			}
-			getServletContext().setAttribute(WebAttributes.RESERVED_TICKETS, reservedTickets);
+		} else if (path.equals("/check_tickets")) {
+			System.out.println("inside");
+			String[] usedTicketIds = request.getParameterValues("used");
+			if (usedTicketIds != null) {
+				for (String usedTicketId : usedTicketIds) {
+					Integer ticketId;
+					try {
+						ticketId = Integer.valueOf(usedTicketId);
+					} catch (NumberFormatException e) {
+						ticketId = null;
+					}
+					if (ticketId != null) {
+						System.out.println("Ticket id: " + ticketId);
+						Ticket ticket = ticketDataProvider.getTicketById(ticketId);
+						ticket.setUsed(true);
+						ticketDataProvider.updateTicket(ticket);
+					}
+				}
+			}
+			
 		}
-		initializeSeats(request, response);
+		initializeSeats(request);
+		initializeTickets(request);
+		if (!errorMessage.isEmpty()) {
+			request.setAttribute(WebAttributes.ERROR_MESSAGE, errorMessage);
+		}
 		request.getRequestDispatcher(WebPages.TICKETS).forward(request, response);
 	}
 

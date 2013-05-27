@@ -9,4 +9,5 @@ public interface WebAttributes {
 	public static final String MOVIES = "movies";
 	public static final String HALLS = "halls";
 	public static final String RESERVED_TICKETS = "reserved_tickets";
+	public static final String MOVIE_TICKETS = "movie_tickets";
 }
