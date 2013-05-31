@@ -26,5 +26,29 @@
 	<classpathentry kind="lib" path="D:/Tomcat/lib/tomcat-i18n-fr.jar"/>
 	<classpathentry kind="lib" path="D:/Tomcat/lib/tomcat-i18n-ja.jar"/>
 	<classpathentry kind="lib" path="D:/Tomcat/lib/tomcat-util.jar"/>
+	<classpathentry kind="lib" path="D:/weld-2.0.0.Final/weld-2.0.0.Final/artifacts/cdi/cdi-api.jar"/>
+	<classpathentry kind="lib" path="D:/weld-2.0.0.Final/weld-2.0.0.Final/artifacts/cdi/cdi-api-javadoc.jar"/>
+	<classpathentry kind="lib" path="D:/weld-2.0.0.Final/weld-2.0.0.Final/artifacts/cdi/cdi-api-sources.jar"/>
+	<classpathentry kind="lib" path="D:/weld-2.0.0.Final/weld-2.0.0.Final/artifacts/weld/weld-api.jar"/>
+	<classpathentry kind="lib" path="D:/weld-2.0.0.Final/weld-2.0.0.Final/artifacts/weld/weld-api-javadoc.jar"/>
+	<classpathentry kind="lib" path="D:/weld-2.0.0.Final/weld-2.0.0.Final/artifacts/weld/weld-api-sources.jar"/>
+	<classpathentry kind="lib" path="D:/weld-2.0.0.Final/weld-2.0.0.Final/artifacts/weld/weld-core.jar"/>
+	<classpathentry kind="lib" path="D:/weld-2.0.0.Final/weld-2.0.0.Final/artifacts/weld/weld-core-javadoc.jar"/>
+	<classpathentry kind="lib" path="D:/weld-2.0.0.Final/weld-2.0.0.Final/artifacts/weld/weld-core-sources.jar"/>
+	<classpathentry kind="lib" path="D:/weld-2.0.0.Final/weld-2.0.0.Final/artifacts/weld/weld-se.jar"/>
+	<classpathentry kind="lib" path="D:/weld-2.0.0.Final/weld-2.0.0.Final/artifacts/weld/weld-se-core.jar"/>
+	<classpathentry kind="lib" path="D:/weld-2.0.0.Final/weld-2.0.0.Final/artifacts/weld/weld-se-core-javadoc.jar"/>
+	<classpathentry kind="lib" path="D:/weld-2.0.0.Final/weld-2.0.0.Final/artifacts/weld/weld-se-core-sources.jar"/>
+	<classpathentry kind="lib" path="D:/weld-2.0.0.Final/weld-2.0.0.Final/artifacts/weld/weld-se-javadoc.jar"/>
+	<classpathentry kind="lib" path="D:/weld-2.0.0.Final/weld-2.0.0.Final/artifacts/weld/weld-servlet.jar"/>
+	<classpathentry kind="lib" path="D:/weld-2.0.0.Final/weld-2.0.0.Final/artifacts/weld/weld-servlet-core.jar"/>
+	<classpathentry kind="lib" path="D:/weld-2.0.0.Final/weld-2.0.0.Final/artifacts/weld/weld-servlet-core-javadoc.jar"/>
+	<classpathentry kind="lib" path="D:/weld-2.0.0.Final/weld-2.0.0.Final/artifacts/weld/weld-servlet-core-sources.jar"/>
+	<classpathentry kind="lib" path="D:/weld-2.0.0.Final/weld-2.0.0.Final/artifacts/weld/weld-servlet-javadoc.jar"/>
+	<classpathentry kind="lib" path="D:/weld-2.0.0.Final/weld-2.0.0.Final/artifacts/weld/weld-servlet-sources.jar"/>
+	<classpathentry kind="lib" path="D:/weld-2.0.0.Final/weld-2.0.0.Final/artifacts/weld/weld-se-sources.jar"/>
+	<classpathentry kind="lib" path="D:/weld-2.0.0.Final/weld-2.0.0.Final/artifacts/weld/weld-spi.jar"/>
+	<classpathentry kind="lib" path="D:/weld-2.0.0.Final/weld-2.0.0.Final/artifacts/weld/weld-spi-javadoc.jar"/>
+	<classpathentry kind="lib" path="D:/weld-2.0.0.Final/weld-2.0.0.Final/artifacts/weld/weld-spi-sources.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

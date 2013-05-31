@@ -1,12 +1,14 @@
 package controllers;
 
 import java.io.IOException;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.RequestDispatcher;
+import javax.inject.Inject;
 
 import model.User;
 
@@ -14,16 +16,19 @@ import utils.UserUtils;
 import utils.WebAttributes;
 import utils.WebPages;
 
-import db.UsersDataProvider;
+import db.JpaUserRepository;
+import db.UserRepository;
+
 
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
 
-	private UsersDataProvider dataProvider;
+	@Inject
+	private JpaUserRepository dataProvider;
 	
 	@Override
 	public void init() throws ServletException {
-		dataProvider = new UsersDataProvider();
+		//dataProvider = new UsersDataProvider();
 		super.init();
 	}
 	
