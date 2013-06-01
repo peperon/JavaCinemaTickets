@@ -9,4 +9,5 @@
 <fullyQualifiedTypeName name="javax.inject.Inject"/>
 <fullyQualifiedTypeName name="db.UserRepository"/>
 <fullyQualifiedTypeName name="db.JpaUserRepository"/>
+<fullyQualifiedTypeName name="db.UsersDataProvider"/>
 </qualifiedTypeNameHistroy>

@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.RequestDispatcher;
-import javax.inject.Inject;
 
 import model.User;
 
@@ -16,19 +15,17 @@ import utils.UserUtils;
 import utils.WebAttributes;
 import utils.WebPages;
 
-import db.JpaUserRepository;
-import db.UserRepository;
+import db.UsersDataProvider;
 
 
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
 
-	@Inject
-	private JpaUserRepository dataProvider;
+	private UsersDataProvider dataProvider;
 	
 	@Override
 	public void init() throws ServletException {
-		//dataProvider = new UsersDataProvider();
+		dataProvider = new UsersDataProvider();
 		super.init();
 	}
 	

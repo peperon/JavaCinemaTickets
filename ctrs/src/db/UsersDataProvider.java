@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.NoResultException;
 import javax.persistence.Persistence;
 
 import model.User;
@@ -28,9 +29,16 @@ public class UsersDataProvider extends BaseDataProvider {
 	
 	public User getUserByName(String userName) {
 		EntityManager em = getEntityManager();
-		User user = em.createQuery("SELECT u FROM User u WHERE u.userName = :userName", User.class).
+		try{
+			User user = em.createQuery("SELECT u FROM User u WHERE u.userName = :userName", User.class).
 				setParameter("userName", userName).getSingleResult();
-		closeEntityManager(em);
-		return user;
+			return user;
+		}
+		catch(NoResultException ex){
+			return null;
+		}
+		finally{
+			closeEntityManager(em);
+		}				
 	}
 }
