@@ -7,4 +7,5 @@ public interface WebPages {
 	public static final String MOVIES_LIST = "/jsp/movies_list.jsp";
 	public static final String MOVIE_EDIT = "/jsp/movie_edit.jsp";
 	public static final String TICKETS = "/jsp/tickets.jsp";
+	public static final String USERS = "/jsp/users.jsp";
 }

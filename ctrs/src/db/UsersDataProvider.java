@@ -23,6 +23,21 @@ public class UsersDataProvider extends BaseDataProvider {
 		return users;
 	}
 	
+	public List<User> getRegularUsers() throws SQLException{
+		EntityManager entityManager = getEntityManager();
+		try {
+			List<User> users = entityManager.createQuery("SELECT u FROM User u WHERE u.userTypeId = 1", User.class)
+					.getResultList();
+			return users;			
+		}
+		catch(NoResultException ex){
+			return null;
+		}
+		finally{
+			closeEntityManager(entityManager);
+		}
+	}
+	
 	public void saveUser(User user) {
 		saveObject(user);
 	}

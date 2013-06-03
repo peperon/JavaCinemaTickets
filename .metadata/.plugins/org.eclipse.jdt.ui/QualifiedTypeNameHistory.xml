@@ -10,4 +10,5 @@
 <fullyQualifiedTypeName name="db.UserRepository"/>
 <fullyQualifiedTypeName name="db.JpaUserRepository"/>
 <fullyQualifiedTypeName name="db.UsersDataProvider"/>
+<fullyQualifiedTypeName name="javax.persistence.NoResultException"/>
 </qualifiedTypeNameHistroy>
