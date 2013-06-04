@@ -10,7 +10,6 @@ import javax.persistence.Persistence;
 
 import javax.enterprise.context.ApplicationScoped;
 
-@Stateless
 public class JpaUserRepository extends BaseDataProvider implements UserRepository {
 	
 	public JpaUserRepository() {
