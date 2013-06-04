@@ -9,11 +9,11 @@ public class ReservedTicket {
 	private int seatId;
 	private Date expiryDate;
 	
-	public ReservedTicket(int userId, int movieId, int seatId) {
+	public ReservedTicket(int userId, int movieId, int seatId, long maxWaitTime) {
 		this.userId = userId;
 		this.movieId = movieId;
 		this.seatId = seatId;
-		this.expiryDate = new Date(new Date().getTime() + 1 * 60 * 1000);
+		this.expiryDate = new Date(new Date().getTime() + maxWaitTime);
 	}
 
 	public int getUserId() {

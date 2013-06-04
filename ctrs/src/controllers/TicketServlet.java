@@ -35,6 +35,7 @@ public class TicketServlet extends HttpServlet {
 	private TicketDataProvider ticketDataProvider;
 	private UsersDataProvider usersDataProvider;
 	private MovieDataProvider movieDataProvider;
+	private long maxWaitTime;
 
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
@@ -42,6 +43,14 @@ public class TicketServlet extends HttpServlet {
 		ticketDataProvider = new TicketDataProvider();
 		usersDataProvider = new UsersDataProvider();
 		movieDataProvider = new MovieDataProvider();
+		String expirationTime = getServletContext().getInitParameter("expiration_time");
+		Integer expirationTimeMinutes = null;
+		try {
+			expirationTimeMinutes = Integer.valueOf(expirationTime);
+		} catch(NumberFormatException e) {
+			throw new ServletException("Init parameter expiration_time has not been initialized!");
+		}
+		maxWaitTime = expirationTimeMinutes * 60 * 1000;
 	}
 	
 	private synchronized String reserveTickets(String[] seats, User user, Integer movieId) {
@@ -52,6 +61,7 @@ public class TicketServlet extends HttpServlet {
 			if (reservedTickets == null) {
 				reservedTickets = new ArrayList<ReservedTicket>();
 			}
+			System.out.println(seats);
 			for (String seat : seats) {
 				boolean hasError = false;
 				Integer seatId;
@@ -71,7 +81,7 @@ public class TicketServlet extends HttpServlet {
 						}
 					}
 					if (!hasError) {
-						reservedTickets.add(new ReservedTicket(user.getId(), movieId, seatId));
+						reservedTickets.add(new ReservedTicket(user.getId(), movieId, seatId, maxWaitTime));
 					}
 				}
 			}
@@ -81,7 +91,7 @@ public class TicketServlet extends HttpServlet {
 	}
 	
 	private void validateReservedTickets(HttpServletRequest request) {
-		ArrayList<ReservedTicket> reservedTickets = (ArrayList<ReservedTicket>) 
+		List<ReservedTicket> reservedTickets = (ArrayList<ReservedTicket>) 
 				request.getServletContext().getAttribute(WebAttributes.RESERVED_TICKETS);
 		List<ReservedTicket> ticketsToRemain = new ArrayList<ReservedTicket>();
 		if (reservedTickets != null && !reservedTickets.isEmpty()) {
@@ -95,7 +105,7 @@ public class TicketServlet extends HttpServlet {
 	}
 	
 	private void initializeSeats(HttpServletRequest request) throws ServletException {
-		String movie = request.getParameter("movie_id");
+		String movie = request.getParameter(WebAttributes.MOVIE_ID);
 		movie = movie != null ? movie.trim() : null;
 		Integer movieId;
 		try {
@@ -108,7 +118,7 @@ public class TicketServlet extends HttpServlet {
 		}
 		
 		List<Integer> takenSeats = new ArrayList<Integer>();
-		ArrayList<ReservedTicket> reservedTickets = (ArrayList<ReservedTicket>) 
+		List<ReservedTicket> reservedTickets = (ArrayList<ReservedTicket>) 
 				getServletContext().getAttribute(WebAttributes.RESERVED_TICKETS);
 		System.out.println(reservedTickets);
 		if (reservedTickets != null && !reservedTickets.isEmpty()) {
@@ -145,12 +155,12 @@ public class TicketServlet extends HttpServlet {
 			}
 		}
 		mainList.add(rowList);
-		request.setAttribute("movie_id", movieId);
+		request.setAttribute(WebAttributes.MOVIE_ID, movieId);
 		request.setAttribute("main_list", mainList);
 	}
 	
 	private void initializeTickets(HttpServletRequest request) throws ServletException {
-		String movieIdAsString = request.getParameter("movie_id");
+		String movieIdAsString = request.getParameter(WebAttributes.MOVIE_ID);
 		movieIdAsString = movieIdAsString != null ? movieIdAsString.trim() : null;
 		Integer movieId;
 		try {
@@ -186,7 +196,7 @@ public class TicketServlet extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		User user = (User) request.getSession().getAttribute(WebAttributes.USER);
-		String movie = request.getParameter("movie_id");
+		String movie = request.getParameter(WebAttributes.MOVIE_ID);
 		movie = movie != null ? movie.trim() : null;
 		Integer movieId;
 		try {
@@ -203,11 +213,13 @@ public class TicketServlet extends HttpServlet {
 		if (path.equals("/reserve_tickets")) {
 			errorMessage += reserveTickets(seats, user, movieId);
 		} else if (path.equals("/confirm_tickets")) {
-			String[] ticketsToConfirm = request.getParameterValues("ticket");
+			String[] ticketsToConfirm = request.getParameterValues(WebAttributes.TICKET);
 			List<Integer> seatIds = new ArrayList<Integer>();
-			if (ticketsToConfirm == null) {
+			if (ticketsToConfirm == null || ticketsToConfirm.length == 0) {
 				errorMessage += "You have selected no tickets to confirm! ";
 			} else {
+				List<ReservedTicket> reservedTickets = 
+						(ArrayList<ReservedTicket>) getServletContext().getAttribute(WebAttributes.RESERVED_TICKETS);
 				for (String seat : ticketsToConfirm) {
 					Integer seatId;
 					try {
@@ -216,18 +228,24 @@ public class TicketServlet extends HttpServlet {
 						seatId = null;
 					}
 					if (seatId != null) {
-						seatIds.add(seatId);
-						ticketDataProvider.saveTicket(new Ticket(null, user.getId(), movieId, seatId, new Date(), false));
+						for (ReservedTicket reservedTicket : reservedTickets) {
+							if (reservedTicket.getUserId() == user.getId() && 
+									reservedTicket.getMovieId() == movieId &&
+									reservedTicket.getExpiryDate().getTime() >= new Date().getTime()) {
+								seatIds.add(seatId);
+								ticketDataProvider.saveTicket(new Ticket(null, user.getId(), 
+										movieId, seatId, new Date(), false));
+								break;
+							}
+						}
+						
 					}
 				}
 				if (!seatIds.isEmpty()) {
-					List<ReservedTicket> newList = new ArrayList<ReservedTicket>();
-					ArrayList<ReservedTicket> reservedTickets = 
-							(ArrayList<ReservedTicket>) getServletContext().getAttribute(WebAttributes.RESERVED_TICKETS);
 					if (reservedTickets != null && !reservedTickets.isEmpty()) {
+						List<ReservedTicket> newList = new ArrayList<ReservedTicket>();
 						for (ReservedTicket ticket : reservedTickets) {
-							if (!(ticket.getMovieId() == movieId && ticket.getUserId() == user.getId() 
-									&& seatIds.contains(ticket.getSeatId())) 
+							if (!seatIds.contains(ticket.getSeatId())
 									&& ticket.getExpiryDate().getTime() > new Date().getTime()) {
 								newList.add(ticket);
 							}
@@ -237,7 +255,6 @@ public class TicketServlet extends HttpServlet {
 				}
 			}
 		} else if (path.equals("/check_tickets")) {
-			System.out.println("inside");
 			String[] usedTicketIds = request.getParameterValues("used");
 			if (usedTicketIds != null) {
 				for (String usedTicketId : usedTicketIds) {

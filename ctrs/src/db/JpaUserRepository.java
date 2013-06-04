@@ -3,12 +3,7 @@ package db;
 import java.sql.SQLException;
 import java.util.List;
 import model.User;
-
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-
-import javax.enterprise.context.ApplicationScoped;
 
 public class JpaUserRepository extends BaseDataProvider implements UserRepository {
 	

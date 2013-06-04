@@ -9,6 +9,7 @@
 <title>Edit movie</title>
 </head>
 <body>
+<div style="color:green">${system_message }</div>
 <div style="color:red">${error_message }</div>
 <c:choose>
 <c:when test="${sessionScope.user.userTypeId != 1 }">

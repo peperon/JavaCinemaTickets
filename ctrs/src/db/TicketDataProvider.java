@@ -14,7 +14,7 @@ public class TicketDataProvider extends BaseDataProvider {
 	
 	public List<Ticket> getTickets() {
 		EntityManager em = getEntityManager();
-		List<Ticket> tickets = em.createQuery("SELECT t FROM Ticket t", Ticket.class).getResultList();
+		List<Ticket> tickets = em.createQuery("SELECT t FROM Ticket t ORDER BY t.date", Ticket.class).getResultList();
 		closeEntityManager(em);
 		return tickets;
 	}

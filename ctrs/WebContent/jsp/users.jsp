@@ -9,7 +9,7 @@
 <title>Users</title>
 </head>
 <body>
-	<table>
+	<table border="1">
 		<thead>
 			<tr>
 				<td>User name</td>

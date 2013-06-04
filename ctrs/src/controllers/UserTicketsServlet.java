@@ -10,6 +10,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import utils.UserTypes;
+import utils.UserUtils;
 import utils.WebAttributes;
 import utils.WebPages;
 
@@ -37,7 +39,7 @@ public class UserTicketsServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String userIdString = request.getParameter("user_id");
+		String userIdString = request.getParameter(WebAttributes.USER_ID);
 		userIdString = userIdString != null ? userIdString.trim() : null;
 		Integer userId;
 		try {
@@ -46,9 +48,15 @@ public class UserTicketsServlet extends HttpServlet {
 			userId = null;
 		}
 		if (userId == null) {
-			throw new ServletException("Unknown movie id!");
+			throw new ServletException("Unknown user id!");
 		}
 		
+		if (!UserUtils.isUserInRole(request, UserTypes.USER_TYPE_POWER_USER)) {
+			request.setAttribute(WebAttributes.ERROR_MESSAGE, 
+					"You are not authorized to access this resource! ");
+			request.getRequestDispatcher(WebPages.HOME).forward(request, response);
+			return;
+		}
 		List<Ticket> tickets = ticketDataProvider.getTicketsByUser(userId);
 		
 		request.setAttribute(WebAttributes.USER_TICKETS, tickets);

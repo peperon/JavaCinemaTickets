@@ -37,5 +37,15 @@ public class UserUtils {
 		User user = (User) session.getAttribute(WebAttributes.USER);
 		return user != null;
 	}
+	
+	public static boolean isUserInRole(HttpServletRequest request, int requiredAccessLevel) {
+		HttpSession session = request.getSession();
+		User user = (User) session.getAttribute(WebAttributes.USER);
+		if (user == null || user.getUserTypeId() < requiredAccessLevel) {
+			return false;
+		} else {
+			return true;
+		}
+	}
 
 }

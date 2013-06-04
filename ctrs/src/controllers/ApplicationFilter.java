@@ -14,6 +14,7 @@ import javax.servlet.http.HttpSession;
 
 import model.User;
 
+import utils.UserUtils;
 import utils.WebAttributes;
 import utils.WebPages;
 
@@ -24,13 +25,10 @@ public class ApplicationFilter implements Filter {
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
 		String path = httpRequest.getServletPath();
 		if (!path.equals("/login") && !path.equals("/login/") && 
-				!path.equals("/register") && !path.equals("/register/")) {
-			HttpSession session = httpRequest.getSession();
-			User user = (User) session.getAttribute(WebAttributes.USER);
-			if (user == null) {
-				httpRequest.getRequestDispatcher(WebPages.LOGIN).forward(httpRequest, response);
-				return;
-			}
+				!path.equals("/register") && !path.equals("/register/") &&
+				!UserUtils.isUserLoggedIn(httpRequest)) {
+			httpRequest.getRequestDispatcher(WebPages.LOGIN).forward(httpRequest, response);
+			return;
 		}
 		chain.doFilter(httpRequest, response);	
 	}
