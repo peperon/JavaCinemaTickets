@@ -11,4 +11,5 @@ public interface WebAttributes {
 	public static final String RESERVED_TICKETS = "reserved_tickets";
 	public static final String MOVIE_TICKETS = "movie_tickets";
 	public static final String USERS = "users";
+	public static final String USER_TICKETS = "user_tickets";
 }

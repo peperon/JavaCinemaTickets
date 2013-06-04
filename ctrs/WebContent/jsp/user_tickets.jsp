@@ -6,30 +6,32 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Users</title>
+<title>Tickets</title>
 </head>
 <body>
 	<table>
 		<thead>
 			<tr>
-				<td>User name</td>
-				<td>First name</td>
-				<td>Last name</td>
-				<td>Tickets</td>
+				<td>Movie</td>
+				<td>Owner</td>
+				<td>Seat</td>
+				<td>Date</td>
+				<td>Used</td>
 			</tr>
 		</thead>
 		<tbody>
-			<c:forEach var="user" items="${users }">
+			<c:forEach var="ticket" items="${user_tickets }">
 				<tr>
-					<td>${user.userName }</td>
-					<td>${user.firstName }</td>
-					<td>${user.lastName }</td>
-					<td><a href="/ctrs/user_tickets?user_id=${user.id }">${user.tickets.size() }</a></td>
+					<td>${ticket.movie.title }</td>
+					<td>${ticket.user.userName }</td>
+					<td>Row: ${ticket.seat.row } Seat: ${ticket.seat.column }</td>
+					<td>${ticket.date }</td>
+					<td>${ticket.used }</td>
 				</tr>
 			</c:forEach>
 		</tbody>
 	</table>
-	<div><a href="/ctrs/home">Back to welcome page</a></div>
+	<div><a href="/ctrs/users">Back to users page</a></div>
 	<div><a href="/ctrs/logout">Logout</a></div>
 </body>
 </html>

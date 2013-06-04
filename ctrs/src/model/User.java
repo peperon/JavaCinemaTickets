@@ -2,6 +2,9 @@ package model;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
+
 import javax.persistence.*;
 
 @Entity
@@ -32,6 +35,9 @@ public class User implements Serializable {
 	@Basic
 	@Column(name="user_type_id")
 	private int userTypeId;
+	@OneToMany
+	@JoinColumn(name="user_id")
+	private Set<Ticket> tickets;
 	
 	public User() { }
 
@@ -100,6 +106,13 @@ public class User implements Serializable {
 
 	public void setUserTypeId(int userTypeId) {
 		this.userTypeId = userTypeId;
-	};
-	
+	}
+
+	public Set<Ticket> getTickets() {
+		return tickets;
+	}
+
+	public void setTickets(Set<Ticket> tickets) {
+		this.tickets = tickets;
+	};	
 }

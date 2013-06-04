@@ -20,7 +20,6 @@ INDEX VERSION 1.126+D:\Programming\UniProj\java\JavaCinemaTickets\.metadata\.plu
 4106406894.index
 2147720621.index
 4024730030.index
-2511304260.index
 3235694445.index
 674210601.index
 1115467115.index

@@ -12,7 +12,10 @@
 	<c:when test="${sessionScope.user != null}">
 		<span>Welcome ${sessionScope.user.userName }!</span>
 		<div><a href="/ctrs/movies">Movies</a></div>
-		<div><a href="/ctrs/logout">Logout</a></div>
+		<c:if test="${sessionScope.user.userTypeId != 1}">
+		<div><a href="/ctrs/users">Users</a></div>
+		</c:if>
+		<div><a href="/ctrs/logout">Logout</a></div>		
 		
 	</c:when>
 	<c:otherwise>
