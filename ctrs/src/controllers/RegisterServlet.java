@@ -19,6 +19,7 @@ import db.UsersDataProvider;
 import utils.LogUtils;
 import utils.UserTypes;
 import utils.UserUtils;
+import utils.Validations;
 import utils.WebAttributes;
 import utils.WebPages;
 
@@ -63,6 +64,7 @@ public class RegisterServlet extends HttpServlet {
 			errorMessage += "Username is required! ";
 		} else {
 			username = username.trim();
+			errorMessage += Validations.validateText("Username", username, 3, 50, true);
 			List<User> users = null;
 			try {
 				users = usersDataProvider.getUsers();
@@ -73,25 +75,28 @@ public class RegisterServlet extends HttpServlet {
 				for (User user : users) {
 					if (user.getUserName().equalsIgnoreCase(username)) {
 						error = true;
-						errorMessage += " Username " + username + " is already taken! ";
+						errorMessage += "Username " + username + " is already taken! ";
 						break;
 					}
 				}
 			}
 		}
 		
-		if (firstName == null || firstName.isEmpty()) {
+		if (firstName == null || firstName.trim().isEmpty()) {
 			error = true;
 			errorMessage += "First name is required! ";
 		} else {
 			firstName = firstName.trim();
+			errorMessage += Validations.validateText("First name", firstName, 2, 50, true);
+			
 		}
 		
-		if (lastName == null || lastName.isEmpty()) {
+		if (lastName == null || lastName.trim().isEmpty()) {
 			error = true;
 			errorMessage += "Last name is required! ";
 		} else {
 			lastName = lastName.trim();
+			errorMessage += Validations.validateText("Last name", lastName, 2, 50, true);
 		}
 		
 		String passwordHashString = "";
@@ -100,17 +105,17 @@ public class RegisterServlet extends HttpServlet {
 			errorMessage += "Password is required! ";
 		} else if (!password.equals(password2)) {
 			error = true;
-			errorMessage += "Passwords don't match!";
+			errorMessage += "Passwords don't match! ";
 		} else {
 			passwordHashString = UserUtils.getSHA256HashString(password);
-			if (passwordHashString == null) {
+			if (passwordHashString == null || passwordHashString.isEmpty()) {
 				error = true;
 				errorMessage += "There is a problem with our application. Please try again later. ";
 			}
 		}
 		
 		RequestDispatcher view = null;
-		if (!error && !passwordHashString.isEmpty()) {
+		if (!error) {
 			User user = new User(null, username, firstName, lastName, passwordHashString, 
 					new Date(), UserTypes.USER_TYPE_USER);
 			usersDataProvider.saveUser(user);

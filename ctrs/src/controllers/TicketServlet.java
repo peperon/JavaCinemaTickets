@@ -17,23 +17,67 @@ import utils.WebPages;
 
 import model.HallLayout;
 import model.HallLayoutWebModel;
+import model.Movie;
 import model.ReservedTicket;
 import model.Ticket;
+import model.TicketWebModel;
 import model.User;
 
 import db.HallDataProvider;
+import db.MovieDataProvider;
 import db.TicketDataProvider;
+import db.UsersDataProvider;
 
 @WebServlet({"/tickets", "/reserve_tickets", "/confirm_tickets", "/check_tickets"})
 public class TicketServlet extends HttpServlet {
        
 	private HallDataProvider hallDataProvider;
 	private TicketDataProvider ticketDataProvider;
+	private UsersDataProvider usersDataProvider;
+	private MovieDataProvider movieDataProvider;
 
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
 		hallDataProvider = new HallDataProvider();
 		ticketDataProvider = new TicketDataProvider();
+		usersDataProvider = new UsersDataProvider();
+		movieDataProvider = new MovieDataProvider();
+	}
+	
+	private synchronized String reserveTickets(String[] seats, User user, Integer movieId) {
+		String errorMessage = "";
+		if (seats != null && seats.length > 0 && user != null && movieId != null) {
+			List<ReservedTicket> reservedTickets = 
+					(ArrayList<ReservedTicket>) getServletContext().getAttribute(WebAttributes.RESERVED_TICKETS);
+			if (reservedTickets == null) {
+				reservedTickets = new ArrayList<ReservedTicket>();
+			}
+			for (String seat : seats) {
+				boolean hasError = false;
+				Integer seatId;
+				try {
+					seatId = Integer.valueOf(seat);
+				} catch (NumberFormatException e) {
+					seatId = null;
+				}
+				if (seatId != null) {
+					if (reservedTickets != null) {
+						for (ReservedTicket reservedTicket : reservedTickets) {
+							if (reservedTicket.getSeatId() == seatId) {
+								hasError = true;
+								errorMessage += "Seat #" + reservedTicket.getSeatId() + " is already taken! ";
+								break;
+							}
+						}
+					}
+					if (!hasError) {
+						reservedTickets.add(new ReservedTicket(user.getId(), movieId, seatId));
+					}
+				}
+			}
+			getServletContext().setAttribute(WebAttributes.RESERVED_TICKETS, reservedTickets);
+		}
+		return errorMessage;
 	}
 	
 	private void validateReservedTickets(HttpServletRequest request) {
@@ -106,11 +150,11 @@ public class TicketServlet extends HttpServlet {
 	}
 	
 	private void initializeTickets(HttpServletRequest request) throws ServletException {
-		String movie = request.getParameter("movie_id");
-		movie = movie != null ? movie.trim() : null;
+		String movieIdAsString = request.getParameter("movie_id");
+		movieIdAsString = movieIdAsString != null ? movieIdAsString.trim() : null;
 		Integer movieId;
 		try {
-			movieId = Integer.valueOf(movie);
+			movieId = Integer.valueOf(movieIdAsString);
 		} catch (NumberFormatException e) {
 			movieId = null;
 		}
@@ -118,12 +162,14 @@ public class TicketServlet extends HttpServlet {
 			throw new ServletException("Unknown movie id!");
 		}
 		
-		List<Ticket> movieTickets = new ArrayList<Ticket>();
+		List<TicketWebModel> movieTickets = new ArrayList<TicketWebModel>();
 		
 		List<Ticket> tickets = ticketDataProvider.getTickets();
+		Movie movie = movieDataProvider.getMovieById(movieId);
 		for (Ticket ticket : tickets) {
 			if (ticket.getMovieId() == movieId) {
-				movieTickets.add(ticket);
+				User user = usersDataProvider.getUserById(ticket.getUserId());
+				movieTickets.add(new TicketWebModel(ticket, user.getUserName(), movie.getTitle()));
 			}
 		}
 		if (!tickets.isEmpty()) {
@@ -155,37 +201,7 @@ public class TicketServlet extends HttpServlet {
 		validateReservedTickets(request);
 		System.out.println("Path: " + path);
 		if (path.equals("/reserve_tickets")) {
-			if (seats != null && seats.length > 0 && user != null && movieId != null) {
-				ArrayList<ReservedTicket> reservedTickets = 
-						(ArrayList<ReservedTicket>) getServletContext().getAttribute(WebAttributes.RESERVED_TICKETS);
-				if (reservedTickets == null) {
-					reservedTickets = new ArrayList<ReservedTicket>();
-				}
-				for (String seat : seats) {
-					hasError = false;
-					Integer seatId;
-					try {
-						seatId = Integer.valueOf(seat);
-					} catch (NumberFormatException e) {
-						seatId = null;
-					}
-					if (seatId != null) {
-						if (reservedTickets != null) {
-							for (ReservedTicket reservedTicket : reservedTickets) {
-								if (reservedTicket.getSeatId() == seatId) {
-									hasError = true;
-									errorMessage += "Seat #" + reservedTicket.getSeatId() + " is already taken! ";
-									break;
-								}
-							}
-						}
-						if (!hasError) {
-							reservedTickets.add(new ReservedTicket(user.getId(), movieId, seatId));
-						}
-					}
-				}
-				getServletContext().setAttribute(WebAttributes.RESERVED_TICKETS, reservedTickets);
-			}
+			errorMessage += reserveTickets(seats, user, movieId);
 		} else if (path.equals("/confirm_tickets")) {
 			String[] ticketsToConfirm = request.getParameterValues("ticket");
 			List<Integer> seatIds = new ArrayList<Integer>();

@@ -18,7 +18,7 @@ import utils.WebAttributes;
 import utils.WebPages;
 
 @WebFilter("/*")
-public class ApplicationListener implements Filter {
+public class ApplicationFilter implements Filter {
 	
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 		HttpServletRequest httpRequest = (HttpServletRequest) request;

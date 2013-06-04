@@ -51,20 +51,26 @@ public class MovieServlet extends HttpServlet {
 		String path = request.getServletPath();
 		System.out.println("Path in MovieServlet: " + path);
 		RequestDispatcher view = null;
+		
+		
 		if (path.equals("/movie") || path.equals("/movie/")) {
+			/** editing or viewing a movie */
 			String id = request.getParameter(WebAttributes.ID);
 			if (id == null || id.isEmpty()) { // editing an existing movie
 				id = (String) request.getAttribute(WebAttributes.ID);
 			}
 			if (id != null && !id.isEmpty()) {
-				int movieId = Integer.parseInt(id);
-				Movie movie = movieDataProvider.getMovieById(movieId);
-				request.setAttribute(WebAttributes.MOVIE, movie);
+				Integer movieId = Integer.valueOf(id);
+				if (movieId != null) {
+					Movie movie = movieDataProvider.getMovieById(movieId);
+					request.setAttribute(WebAttributes.MOVIE, movie);
+				}
 			}
 			List<Hall> halls = hallDataProvider.getHalls();
 			request.setAttribute(WebAttributes.HALLS, halls);
 			view = request.getRequestDispatcher(WebPages.MOVIE_EDIT);
 		} else if (path.equals("/movies") || path.equals("/movies/")) {
+			/** movie list */
 			List<Movie> movies = movieDataProvider.getMovies(user.getUserTypeId() == UserTypes.USER_TYPE_USER);
 			List<MovieWebModel> listOfMovies = new ArrayList<MovieWebModel>();
 			for (Movie movie : movies) {
@@ -139,6 +145,10 @@ public class MovieServlet extends HttpServlet {
 			} catch (ParseException e) {
 				errorMessage += "Incorrect date or time! ";
 			}
+		}
+		
+		if (dateTime != null && new Date().getTime() > dateTime.getTime()) {
+			errorMessage += "Projection date and time cannot be before today! ";
 		}
 		
 		Calendar calendar = new GregorianCalendar();

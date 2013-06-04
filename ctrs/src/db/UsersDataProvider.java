@@ -7,6 +7,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
+import model.Ticket;
 import model.User;
 
 public class UsersDataProvider extends BaseDataProvider {
@@ -30,6 +31,13 @@ public class UsersDataProvider extends BaseDataProvider {
 		EntityManager em = getEntityManager();
 		User user = em.createQuery("SELECT u FROM User u WHERE u.userName = :userName", User.class).
 				setParameter("userName", userName).getSingleResult();
+		closeEntityManager(em);
+		return user;
+	}
+	
+	public User getUserById(int id) {
+		EntityManager em = getEntityManager();
+		User user = em.find(User.class, id);
 		closeEntityManager(em);
 		return user;
 	}

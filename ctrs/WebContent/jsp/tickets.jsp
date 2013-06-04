@@ -9,6 +9,7 @@
 <title>Tickets page</title>
 </head>
 <body>
+<div>Ticket price ${initParam.price }</div>
 <form action="/ctrs/reserve_tickets" method="post">
 <input type="hidden" name="movie_id" value="${movie_id }"/>
 <table>
@@ -60,7 +61,7 @@
 		<form action="/ctrs/check_tickets" method="post">
 			<input type="hidden" name="movie_id" value="${movie_id }"/>
 			<c:forEach var="ticket" items="${movie_tickets }" varStatus="current">
-				<div>Ticket for seat # ${ticket.seatId } belonging to user ${ticket.userId }
+				<div>Ticket for seat # ${ticket.seatId } belonging to customer ${ticket.userName }
 					<c:choose>
 						<c:when test="${ticket.used }">
 							<input type="checkbox" checked="checked" disabled="disabled" />

@@ -22,13 +22,15 @@
 	</thead>
 	<tbody>
 		<c:forEach var="movie" items="${movies }">
-			<td>${movie.title }</td>
-			<td>${movie.hallName }</td>
-			<td>${movie.year }</td>
-			<td>${movie.length }</td>
-			<td>${movie.projection }</td>
-			<td><a href="/ctrs/movie?id=${movie.id }">Edit/View</a></td>
-			<td><a href="/ctrs/tickets?movie_id=${movie.id }">Tickets</a></td>
+			<tr>
+				<td>${movie.title }</td>
+				<td>${movie.hallName }</td>
+				<td>${movie.year }</td>
+				<td>${movie.length }</td>
+				<td>${movie.projection }</td>
+				<td><a href="/ctrs/movie?id=${movie.id }">Edit/View</a></td>
+				<td><a href="/ctrs/tickets?movie_id=${movie.id }">Tickets</a></td>
+			</tr>
 		</c:forEach>
 	</tbody>
 </table>

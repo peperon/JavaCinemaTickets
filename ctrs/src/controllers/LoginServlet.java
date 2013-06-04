@@ -41,8 +41,8 @@ public class LoginServlet extends HttpServlet {
 			request.getRequestDispatcher(WebPages.HOME).forward(request, response);
 			return;
 		}
-		String userName = request.getParameter("user_name");
-		String password = request.getParameter("password");
+		String userName = request.getParameter(WebAttributes.USER_NAME);
+		String password = request.getParameter(WebAttributes.PASSWORD);
 		boolean error = false;
 		if (userName == null || userName.isEmpty() || password == null || password.isEmpty()) {
 			error = true;
