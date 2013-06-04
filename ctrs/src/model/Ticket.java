@@ -9,6 +9,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -24,15 +26,6 @@ public class Ticket implements Serializable {
 	@Basic
 	@Column(name="id")
 	private Integer id;
-	@Basic
-	@Column(name="user_id")
-	private int userId;
-	@Basic
-	@Column(name="movie_id")
-	private int movieId;
-	@Basic
-	@Column(name="seat_id")
-	private int seatId;
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="date")
 	private Date date;
@@ -40,14 +33,33 @@ public class Ticket implements Serializable {
 	@Column(name="used")
 	private boolean used;
 	
+	@ManyToOne(optional=false)
+	@JoinColumn(name="user_id", referencedColumnName="id")
+	private User user;
+	
+	@ManyToOne(optional=false)
+	@JoinColumn(name="movie_id", referencedColumnName="id")
+	private Movie movie;
+	
+	@ManyToOne(optional=false)
+	@JoinColumn(name="seat_id", referencedColumnName="id")
+	private HallLayout seat;
+	
 	public Ticket() { }
 
 	public Ticket(Integer id, int userId, int movieId, int seatId, Date date, boolean used) {
 		super();
 		this.id = id;
-		this.userId = userId;
-		this.movieId = movieId;
-		this.seatId = seatId;
+		
+		user = new User();
+		user.setId(userId);
+		
+		movie = new Movie();
+		movie.setId(movieId);
+		
+		seat = new HallLayout();
+		seat.setId(seatId);
+		
 		this.date = date;
 		this.used = used;
 	}
@@ -61,27 +73,15 @@ public class Ticket implements Serializable {
 	}
 
 	public int getUserId() {
-		return userId;
-	}
-
-	public void setUserId(int userId) {
-		this.userId = userId;
+		return user.getId();
 	}
 
 	public int getMovieId() {
-		return movieId;
-	}
-
-	public void setMovieId(int movieId) {
-		this.movieId = movieId;
+		return getMovie().getId();
 	}
 
 	public int getSeatId() {
-		return seatId;
-	}
-
-	public void setSeatId(int seatId) {
-		this.seatId = seatId;
+		return getSeat().getId();
 	}
 
 	public Date getDate() {
@@ -98,6 +98,30 @@ public class Ticket implements Serializable {
 
 	public void setUsed(boolean used) {
 		this.used = used;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
+	public Movie getMovie() {
+		return movie;
+	}
+
+	public void setMovie(Movie movie) {
+		this.movie = movie;
+	}
+
+	public HallLayout getSeat() {
+		return seat;
+	}
+
+	public void setSeat(HallLayout seat) {
+		this.seat = seat;
 	}
 	
 }

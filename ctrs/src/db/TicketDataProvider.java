@@ -19,6 +19,15 @@ public class TicketDataProvider extends BaseDataProvider {
 		return tickets;
 	}
 	
+	public List<Ticket> getTicketsByUser(int userId){
+		EntityManager entityManager = getEntityManager();
+		List<Ticket> tickets = entityManager.createQuery("SELECT t FROM Ticket t WHERE t.user.id = :userId", Ticket.class)
+				.setParameter("userId", userId)
+				.getResultList();
+		
+		return tickets;
+	}
+	
 	public Ticket saveTicket(Ticket ticket) {
 		Object object = saveObject(ticket);
 		return (Ticket) object;

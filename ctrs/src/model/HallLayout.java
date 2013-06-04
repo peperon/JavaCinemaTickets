@@ -53,5 +53,4 @@ public class HallLayout implements Serializable {
 	public void setColumnId(int column) {
 		this.column = column;
 	};
-	
 }
