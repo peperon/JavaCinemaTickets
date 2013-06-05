@@ -86,7 +86,7 @@ public class MovieServlet extends HttpServlet {
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String id = request.getParameter("id");
+		String id = request.getParameter(WebAttributes.ID);
 		String title = request.getParameter("title");
 		String hall = request.getParameter("hall");
 		String year = request.getParameter("year");
@@ -118,6 +118,13 @@ public class MovieServlet extends HttpServlet {
 		}
 		
 		title = title != null ? title.trim() : null;
+		List<Movie> movies = movieDataProvider.getMovies(false);
+		for (Movie movie : movies) {
+			if (movie.getTitle().equalsIgnoreCase(title)) {
+				errorMessage += "Movie already exists in the database! ";
+				break;
+			}
+		}
 		errorMessage += Validations.validateText("Movie title", title, 1, 100, true);
 		
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
@@ -180,6 +187,7 @@ public class MovieServlet extends HttpServlet {
 				movieDataProvider.updateMovie(movie);
 				request.setAttribute(WebAttributes.MOVIE, movie);
 			}
+			request.setAttribute(WebAttributes.SYSTEM_MESSAGE, "Movie has been successfully saved!");
 		} else {
 			request.setAttribute(WebAttributes.ERROR_MESSAGE, errorMessage);
 		}

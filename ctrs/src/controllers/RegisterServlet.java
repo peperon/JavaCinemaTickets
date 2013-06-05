@@ -50,9 +50,9 @@ public class RegisterServlet extends HttpServlet {
 			return;
 		}
 		LogUtils.logPath(request);
-		String username = request.getParameter("user_name");
-		String password = request.getParameter("password");
-		String password2 = request.getParameter("password2");
+		String username = request.getParameter(WebAttributes.USER_NAME);
+		String password = request.getParameter(WebAttributes.PASSWORD);
+		String password2 = request.getParameter(WebAttributes.PASSWORD + "2");
 		String firstName = request.getParameter("first_name");
 		String lastName = request.getParameter("last_name");
 		

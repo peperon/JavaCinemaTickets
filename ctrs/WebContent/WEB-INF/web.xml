@@ -19,6 +19,10 @@
 		<param-name>price</param-name>
 		<param-value>$12.00</param-value>
 	</context-param>
+	<context-param>
+		<param-name>expiration_time</param-name>
+		<param-value>1</param-value>
+	</context-param>
 	<!--
     <security-constraint>  
          <web-resource-collection>

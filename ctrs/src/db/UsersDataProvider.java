@@ -8,6 +8,8 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.NoResultException;
 import javax.persistence.Persistence;
 
+import utils.UserTypes;
+
 import model.Ticket;
 import model.User;
 
@@ -27,14 +29,12 @@ public class UsersDataProvider extends BaseDataProvider {
 	public List<User> getRegularUsers() throws SQLException{
 		EntityManager entityManager = getEntityManager();
 		try {
-			List<User> users = entityManager.createQuery("SELECT u FROM User u WHERE u.userTypeId = 1", User.class)
-					.getResultList();
-			return users;			
-		}
-		catch(NoResultException ex){
+			List<User> users = entityManager.createQuery("SELECT u FROM User u WHERE u.userTypeId = " + 
+					UserTypes.USER_TYPE_USER, User.class).getResultList();
+			return users;
+		} catch(NoResultException ex) {
 			return null;
-		}
-		finally{
+		} finally {
 			closeEntityManager(entityManager);
 		}
 	}
@@ -45,15 +45,13 @@ public class UsersDataProvider extends BaseDataProvider {
 	
 	public User getUserByName(String userName) {
 		EntityManager em = getEntityManager();
-		try{
+		try {
 			User user = em.createQuery("SELECT u FROM User u WHERE u.userName = :userName", User.class).
 				setParameter("userName", userName).getSingleResult();
 			return user;
-		}
-		catch(NoResultException ex){
+		} catch(NoResultException ex){
 			return null;
-		}
-		finally{
+		} finally {
 			closeEntityManager(em);
 		}				
 	}

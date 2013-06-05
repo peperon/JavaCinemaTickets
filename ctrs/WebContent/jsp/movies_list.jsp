@@ -28,7 +28,15 @@
 				<td>${movie.year }</td>
 				<td>${movie.length }</td>
 				<td>${movie.projection }</td>
-				<td><a href="/ctrs/movie?id=${movie.id }">Edit/View</a></td>
+				<td><a href="/ctrs/movie?id=${movie.id }">
+					<c:choose>
+						<c:when test="${sessionScope.user != null && sessionScope.user.userTypeId != 1 }">
+							Edit
+						</c:when>
+						<c:otherwise>
+							View
+						</c:otherwise>
+					</c:choose></a></td>
 				<td><a href="/ctrs/tickets?movie_id=${movie.id }">Tickets</a></td>
 			</tr>
 		</c:forEach>

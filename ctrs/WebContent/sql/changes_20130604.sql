@@ -1,0 +1,14 @@
+ALTER TABLE movie
+ADD CONSTRAINT unq UNIQUE(title);
+
+ALTER TABLE users
+ALTER COLUMN user_name SET NOT NULL;
+
+ALTER TABLE users
+ALTER COLUMN first_name SET NOT NULL;
+
+ALTER TABLE users
+ALTER COLUMN last_name SET NOT NULL;
+
+ALTER TABLE users
+ADD CONSTRAINT unq_usr_nm UNIQUE(user_name);

@@ -12,7 +12,8 @@ import javax.servlet.http.HttpServletResponse;
 import utils.UserUtils;
 import utils.WebPages;
 
-@WebServlet("/home")
+@WebServlet({"/", "/home"})
+
 public class HomepageServlet extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
